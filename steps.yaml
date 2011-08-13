@@ -1,0 +1,15 @@
+listen: 0.0.0.0:12345
+
+start_with_step: steps/router
+
+steps_include_path: steps views
+
+options:
+  welcome_text: Hello World!
+
+steps/router:
+  - GET  / views/hello
+
+views/index:
+  title: Hello World!
+

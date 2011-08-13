@@ -1,0 +1,13 @@
+{
+    "name": "steps"
+  , "description":
+    "A node.js web server stepping through requests and responses"
+  , "keywords": [ "web", "server", "web server", "step", "steps", "framework"]
+  , "author": "Daniel Ly <daniel.ly@lively5.ch> (http://lively5.ch)"
+  , "version": "0.0.0"
+  , "main": "steps.js"
+  , "repository": { "type": "git", "url": "git://github.com/nalply/steps.git" }
+  , "dependencies": { 
+      "yamlet": "0.0.0"
+  }
+}
