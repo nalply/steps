@@ -1,15 +1,14 @@
-listen: 0.0.0.0:12345
+server.listen: 0.0.0.0:2000
+server.start: steps.Router
+server.include: steps views
 
-start_with_step: steps/router
+steps.Router:
+  - get / views.Hello
+  - all views.404
 
-steps_include_path: steps views
-
-options:
-  welcome_text: Hello World!
-
-steps/router:
-  - GET  / views/hello
-
-views/index:
+views.Hello:
   title: Hello World!
 
+steps.StackTraceLimit:
+  limit: 20
+  
