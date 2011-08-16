@@ -1,7 +1,7 @@
 # Steps
 
 A node.js web server stepping through requests and responses.
- 
+
     server.listen: 0.0.0.0:2000
     server.start: steps.Router
     server.include: steps views
@@ -20,22 +20,26 @@ Note! Steps is pre-alpha.
 
 ## Rationale
 
- * Asynchronous handling of a web request is confusing.
- * Steps can be both sequenced synchronously or started asynchronously.
+ * Asynchronous handling of middleware is confusing.
  * Verification and insightful error messages are helpful to fix bugs.
  * Introspection and verification need identifiable middleware.
- * Middleware is a misnomer, because steps also work in the frontend (render
-   views) and in the backend (access database).
+ * Middleware is a misnomer, because steps also do work in the frontend
+   (render views) and in the backend (access database).
+ * Steps can be both sequenced synchronously or started asynchronously.
  * My god it's full of steps!
    
 ## Facts
 
- * A step is an identifiable minimal unit of work for a web request.
+ * Steps is a node.js server framework.
+ * A task is a request and its response.
+ * A step is an identifiable minimal unit of work for a task.
  * A step is formally a function taking a task and a callback.
+ * A step is given a short human-readable meaningful ID like views.Hello.
  * A request starts with a predefined first step.
- * A step can inject other steps into the task, like a router or a vhost steps.
+ * A step declares its work as completed with error(), next() or end().
+ * A step declares that it does work asynchronously with wait().
+ * A step injects steps (e.g. a router) with insert() or append().
  * A step can declare pre- and post-dependencies.
- * A step declares its work as completed with error(), next(), end().
  * The step runner verifies correct completion of steps and tasks.
  * The router, controllers, views and models are steps.
  * Each step has its own store to save state.
