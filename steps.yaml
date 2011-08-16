@@ -7,7 +7,7 @@ steps.Router:
   - all views.404
 
 views.Hello:
-  title: Hello World!
+  title: Hello World! :-)
 
 steps.StackTraceLimit:
   limit: 20
