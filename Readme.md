@@ -1,43 +1,42 @@
 # Steps
 
- A node.js web server stepping through requests and responses.
+A node.js web server stepping through requests and responses.
  
-    listen: 0.0.0.0:12345
-    start_with_step: steps/router
-    steps_include_path: views
-    options:
-      welcome_text: Hello World!
-    steps/router:
-      - GET  /                views/index
-    views/index:
+    server.listen: 0.0.0.0:2000
+    server.start: steps.Router
+    server.include: steps views
+    
+    steps.Router:
+      - get / views.Hello
+      - all views.404
+    
+    views.Hello:
       title: Hello World!
-      
- Note! Steps is pre-alpha.
- 
+    
+    steps.StackTraceLimit:
+      limit: 20
+          
+Note! Steps is pre-alpha.
+
 ## Rationale
 
  * Asynchronous handling of a web request is confusing.
- * Configuration of web applications should stay clearly arranged.
- * Introspection and managing facilities of middleware needs a rigid and
-   enforceable specification: How to call it? How to identify it? How does it
-   hand off control back to the web server?
- * Middleware in Steps is called a step, because there are steps also for the
-   frontend and the backend.
+ * Steps can be both sequenced synchronously or started asynchronously.
+ * Verification and insightful error messages are helpful to fix bugs.
+ * Introspection and verification need identifiable middleware.
+ * Middleware is a misnomer, because steps also work in the frontend (render
+   views) and in the backend (access database).
+ * My god it's full of steps!
    
 ## Facts
 
- * Configuration with Yamlet.
- * Builds upon unchanged node.js networking.
- * A step is a minimal building block.
- * A step handles an aspect of a web request.
- * A request starts with the first step which may insert more steps, for
-   example the router or a virtual hosting step.
- * A step is a function taking a task and a callback.
- * Steps are composable.
+ * A step is an identifiable minimal unit of work for a web request.
+ * A step is formally a function taking a task and a callback.
+ * A request starts with a predefined first step.
+ * A step can inject other steps into the task, like a router or a vhost steps.
  * A step can declare pre- and post-dependencies.
- * A step ends with error(), next(), end(), append() or insert().
- * For easy debugging correct completion of the steps is enforced.
- * Steps are injected from modules and steps calling append() or insert().
+ * A step declares its work as completed with error(), next(), end().
+ * The step runner verifies correct completion of steps and tasks.
  * The router, controllers, views and models are steps.
  * Each step has its own store to save state.
  * Planned: Introspection of a web request step stack.
