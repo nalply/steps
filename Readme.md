@@ -21,10 +21,11 @@ Note! Steps is pre-alpha.
 ## Rationale
 
  * Asynchronous handling of middleware is confusing.
+ * Middleware is a misnomer, because steps also do work in the frontend
+   (render views) and in the backend (access database). So let's call them
+   **steps**.
  * Verification and insightful error messages are helpful to fix bugs.
  * Introspection and verification need identifiable middleware.
- * Middleware is a misnomer, because steps also do work in the frontend
-   (render views) and in the backend (access database).
  * Steps can be both sequenced synchronously or started asynchronously.
  * My god it's full of steps!
    
@@ -35,14 +36,14 @@ Note! Steps is pre-alpha.
  * A step is an identifiable minimal unit of work for a task.
  * A step is formally a function taking a task and a callback.
  * A step is given a short human-readable meaningful ID like views.Hello.
- * A request starts with a predefined first step.
+ * A task starts with a given first step.
+ * The step runner verifies correct completion of steps and tasks.
+ * Each step has its own store to save state.
  * A step declares its work as completed with error(), next() or end().
  * A step declares that it does work asynchronously with wait().
- * A step injects steps (e.g. a router) with insert() or append().
  * A step can declare pre- and post-dependencies.
- * The step runner verifies correct completion of steps and tasks.
+ * A step injects steps (e.g. a router) with insert() or append().
  * The router, controllers, views and models are steps.
- * Each step has its own store to save state.
  * Planned: Introspection of a web request step stack.
  * Planned: Connect middleware adapter.
  * Planned: Simple request and response filtering.
