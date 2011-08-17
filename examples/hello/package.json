@@ -1,0 +1,9 @@
+{
+    "name": "steps-hello"
+  , "description": "A hello world example for Steps"
+  , "keywords": [ "web", "server", "web server", "step", "steps", "framework"]
+  , "author": "Daniel Ly <daniel.ly@lively5.ch> (http://lively5.ch)"
+  , "version": "0.0.0"
+  , "main": "hello.js"
+  , "dependencies": { "steps": "0.0.0" }
+}

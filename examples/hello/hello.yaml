@@ -1,6 +1,6 @@
 server.listen: 0.0.0.0:2000
 server.start: steps.Router
-server.include: steps views
+server.include: views
 
 steps.Router:
   - get / views.Hello
@@ -8,7 +8,4 @@ steps.Router:
 
 views.Hello:
   title: Hello World! :-)
-
-steps.StackTraceLimit:
-  limit: 20
   

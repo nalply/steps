@@ -5,7 +5,7 @@
   , "keywords": [ "web", "server", "web server", "step", "steps", "framework"]
   , "author": "Daniel Ly <daniel.ly@lively5.ch> (http://lively5.ch)"
   , "version": "0.0.0"
-  , "main": "steps.js"
+  , "main": "lib/server.js"
   , "repository": { "type": "git", "url": "git://github.com/nalply/steps.git" }
   , "dependencies": { 
       "yamlet": "0.0.0"
