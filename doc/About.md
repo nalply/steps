@@ -5,7 +5,7 @@ framework. What does «step» mean?
 
 - A step is a minimal unit of work to handle a task.
 - Formally a step is a function taking a task object and a callback.
-- Steps are niquely identifiable (even if the same step is used twice).
+- Steps are uniquely identifiable (even if the same step is used twice).
 - The step runner manages clean asynchronous completion of the steps.
 
 What is a «task»?
@@ -21,18 +21,24 @@ What is a «task»?
 - To ensure cooperation between steps, the request and the response objects
   are protected.
   - For temporary data use the store. 
-  - Do not monkey-patch. Use the response object shim. TODO.
+  - Do not monkey-patch. Use the response object shim events.
 
-A configuration file configures the server and its steps. The configuration
-has a key-value structure. The keys are the id of the steps and the values
-the step-specific configuration. Additionally there is the `servers` key
+A configuration file defines the server and its steps. The configuration
+has a key-value structure. The keys are the steps ids and the values
+the step-specific configurations. Additionally there is the `servers` key
 to configure the server instances.
 
-On server start up, all steps in the include path are required and initialized,
-then the configured servers are initialized. When a request comes in, the task
-object is created and the step runner starts running the steps. A router or
-a vhost step injects more steps depending on the url or the host header. The
-router and the vhost is configured using their step ids.
+On server start up all steps in the include path are required and initialized.
+Then the configured servers are started. When a request comes in, the task
+object is created and the step runner starts running the steps.
+
+If configured, a router or a vhost step injects more steps depending on the
+url or the host header. The router and the vhost steps are, like all other
+steps, configured using their step ids. The router configuration contains
+a list of routes and to each route a list of steps to be executed if a route
+matches.
+
+TODO: response object shim does not yet have events.
 
 TODO: include directive (for example for separate configuration of virtual
 hosts).
@@ -42,13 +48,13 @@ TODO: currently there is only one server.
 # About Steps
 
 Steps need to be loaded into the application and identified uniquely. Also
-what does it mean that a step is just a function taking a task and a callback?
-How are steps initialized, and managed by the step runner? What happens if the
-same step is used twice?
+what does it mean that a step is a function taking a task and a callback?
+How are steps initialized? How are they managed by the step runner? What
+happens if the same step is used twice?
 
 ## Step loading
 
-When starting the step loader recursively walks the include path
+In the beginning the step loader recursively walks the include path
 `server.include` and also `lib/steps` for the core steps. Steps are also
 injected dynamically.
 
@@ -57,13 +63,13 @@ injected dynamically.
 All steps have an unique identification. Steps loaded from the include path
 get an identification of the form:
 
-    <include>.<sub-path>.<module>#<export>;<version>
+`<include>.<sub-path>.<module>#<export>;<version>`
 
 - **include** one of the items in the include path, eg. `steps` or `views`.
 - **sub-path** the sub-path, omitted for toplevel steps. Replace the directory
-  separator by a dot. Example: `views/news/posts/edit.js` ==> `news.posts`.
+  separator by a dot. Example: `views/news/posts/edit.js` → `news.posts`.
 - **module** the filename without `.js`, omitted if `index`. Example:
-  `views/news/posts/edit.js` ==> `edit`.
+  `views/news/posts/edit.js` → `edit`.
 - **export** one of the module exported Javascript identifiers, omitted with
   preceding hash if `index`.
 - **version** the version id of same steps in the task, omitted if there is
@@ -73,7 +79,7 @@ get an identification of the form:
 
 Steps injected dynamically get an identification of the form:
 
-    .<module-id>#<function>.<position>;<version>
+`.<module-id>#<function>.<position>;<version>`
 
 - Note the leading dot to ensure uniqueness between loaded and injected steps.
 - **module-id** the module module-id of the code doing the injecting.
@@ -113,21 +119,21 @@ follows this protocol:
   - `task.end(cb)`
   - `task.error(cb, error)`
   - `task.wait(cb)`
-  A 'step not completed correctly' warning is printed if this gets forgotten.
   
 - A step might have asynchronous work. It must call `task.wait()` before
   returning and later call one of:
   - `task.next(cb)`
   - `task.end(cb)`
   - `task.error(cb, error)`
-  If this is forgotten, then... TODO.
 
-- A step is not allowed to call one of these methods more than once. If this
-  happens the culprit will be admonished severely. TODO.
+- A step is not allowed to call one of these methods more than once.
 
 - A step can inject other steps by calling `task.insert(cb, steps)` and
   `task.append(cb, steps)`.
-  
+
+The step runner detects if a step did not call one of the compulsive methods
+and will log a warning and/or produce a 500. TODO: works only partially.
+
 ## Step initialization
 
 A step can be initialized when the application gets booted up. If the step
@@ -150,13 +156,14 @@ and the configuration
     examples.StackTraceLimit:
       limit: Infinity
 
-then the application will be set `Error.stackTraceLimit` to `Infinity`.
+and also the step being injected somewhere, then the application will be set 
+`Error.stackTraceLimit` to `Infinity`.
 
 ## Step versions
 
 Step versions are not initialized separately. Let's say we have steps
 `steps.Logger;first` and `steps.Logger;detailed`. `logger.init()` is called
-only once and its `stepId` is `steps.Logger`. Initialization must be prepare
+only once and its `stepId` is `steps.Logger`. Initialization must prepare
 for all versions. When running, the step can use:
 
 - `task.config(cb)` get the config of the step only. Two step versions of same
@@ -164,7 +171,7 @@ for all versions. When running, the step can use:
 - `task.store(cb)` get the store of the step only. Two step versions of same
   step will get two different stores. TODO.
 - `task.id(cb)` get the step id with version. TODO.
-  
+
 This way the step knows which version it is running on.
 
 ## Step dependencies
