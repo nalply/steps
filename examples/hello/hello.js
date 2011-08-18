@@ -1,4 +1,4 @@
 'use strict';
- 
-require('steps').start('hello.yaml');
+
+require('steps').start(__filename.replace('js', 'yaml'));
 

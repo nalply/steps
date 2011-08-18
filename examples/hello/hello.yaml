@@ -1,11 +1,15 @@
 server.listen: 0.0.0.0:2000
 server.start: steps.Router
+server.afterEnd: steps.Logger
 server.include: views
 
 steps.Router:
-  - get / views.Hello
-  - all views.404
+  - get / views.Hello steps.Logger
+  - all steps.Logger views.404
+
+steps.Logger:
+  format: dev
 
 views.Hello:
   title: Hello World! :-)
-  
+
