@@ -63,25 +63,26 @@ injected dynamically.
 All steps have an unique identification. Steps loaded from the include path
 get an identification of the form:
 
-`<include>.<sub-path>.<module>#<export>;<version>`
+`<include>.<sub-path>.<module>.<export>.<version>`
 
 - **include** one of the items in the include path, eg. `steps` or `views`.
 - **sub-path** the sub-path, omitted for toplevel steps. Replace the directory
   separator by a dot. Example: `views/news/posts/edit.js` → `news.posts`.
-- **module** the filename without `.js`, omitted if `index`. Example:
-  `views/news/posts/edit.js` → `edit`.
+- **module** the filename without `.js`. Example: `views/news/posts/edit.js` →
+  `edit`. To avoid ambigousness, no file `name.js` and no subdirectory `name`
+  are allowed to exist in the same directory.
 - **export** one of the module exported Javascript identifiers, omitted with
-  preceding hash if `index`.
+  if `index`.
 - **version** the version id of same steps in the task, omitted if there is
   only one same step. If the same step is used more than once, the first step
   gets version `first`, and the other must be given unique names, like this:
-  `steps.Logger;detailed`.
+  `steps.logger.detailed`.
 
 Steps injected dynamically get an identification of the form:
 
-`.<module-id>#<function>.<position>;<version>`
+`<module-id>.<function>$<position>.<version>`
 
-- Note the leading dot to ensure uniqueness between loaded and injected steps.
+- Note the dollar sign before position.
 - **module-id** the module module-id of the code doing the injecting.
 - **function** the name of the function, omitted if anonymous.
 - **position** the code position. Not yet clear whether this is technically
@@ -91,21 +92,21 @@ Steps injected dynamically get an identification of the form:
 
 ### Examples (assuming `server.include: views actions models`)
 
-- `steps.Logger` the first logger, uses the index() function in
-  `lib/steps/Logger.js`.
-- `steps.Logger;detailed` the detailed logger additionally to the first one,
-   also uses the index() function in `lib/steps/Logger.js`.
+- `steps.logger` the first logger, uses the index() function in
+  `lib/steps/logger.js`.
+- `steps.logger.detailed` the detailed logger additionally to the first one,
+   also uses the index() function in `lib/steps/logger.js`.
 
 ### Usage
 
 Because all steps are uniquely identifiable, even two steps of same class
 (with version), it is possible to give them centralized configuration. Let's
-say we have two Loggers: `steps.Logger` and `steps.Logger;detailed`, then we
+say we have two Loggers: `steps.logger` and `steps.logger.detailed`, then we
 can have the configuration:
 
-    steps.Logger:
+    steps.logger:
       format: short
-    steps.Logger;detailed:
+    steps.logger.detailed:
       format: dev
       immediate: true
 
@@ -142,7 +143,7 @@ function has a property `init`, which is a function, it is called with
 
 ### Example with initialization
 
-Let's say we have the file `examples/StackTraceLimit.js`:
+Let's say we have the file `examples/stacktracelimit.js`:
 
     exports.index = function() {};
     exports.index.init = function(config) {
@@ -153,7 +154,7 @@ Let's say we have the file `examples/StackTraceLimit.js`:
 
 and the configuration
 
-    examples.StackTraceLimit:
+    examples.stacktracelimit:
       limit: Infinity
 
 and also the step being injected somewhere, then the application will be set 
@@ -162,8 +163,8 @@ and also the step being injected somewhere, then the application will be set
 ## Step versions
 
 Step versions are not initialized separately. Let's say we have steps
-`steps.Logger;first` and `steps.Logger;detailed`. `logger.init()` is called
-only once and its `stepId` is `steps.Logger`. Initialization must prepare
+`steps.logger.first` and `steps.logger.detailed`. `logger.init()` is called
+only once and its `stepId` is `steps.logger`. Initialization must prepare
 for all versions. When running, the step can use:
 
 - `task.config(cb)` get the config of the step only. Two step versions of same
