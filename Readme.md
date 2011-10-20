@@ -1,3 +1,13 @@
+# Preliminary note
+
+This project is abandoned. I still think there are good ideas in it but:
+
+- It's too complicated
+- I don't have enough time
+- It attacks connect.js
+
+It was an interesting experience to develop it. I learnt a lot.
+
 # Steps
 
 A node.js web server stepping through requests and responses.
